@@ -38,6 +38,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static ru.practicum.shareit.booking.model.BookingMapper.bookingFromDto;
 import static ru.practicum.shareit.booking.model.BookingStatus.APPROVED;
+import static ru.practicum.shareit.booking.model.BookingStatus.REJECTED;
 import static ru.practicum.shareit.item.model.comment.CommentMapper.commentToDto;
 import static ru.practicum.shareit.item.model.item.ItemMapper.itemToDto;
 
@@ -133,6 +134,39 @@ public class ItemServiceTest {
         );
 
         assertThat(e.getMessage(), equalTo("Not found itemId: 1"));
+    }
+
+    @Test
+    public void shouldGetItemsByUserId() {
+        Mockito
+                .when(memoryUser.existsById(anyInt()))
+                .thenReturn(true);
+        Mockito
+                .when(memoryItem.findByOwnerId(anyInt(), any(Pageable.class)))
+                .thenReturn(List.of(item));
+        Mockito
+                .when(memoryBooking.findAllByItemOwnerIdInAndStatusNotOrderByStart(
+                        List.of(1), REJECTED
+                ))
+                .thenReturn(List.of());
+
+        List<ItemDto> items = itemService.getItems(1, 0, 5);
+        ItemDto itemDtoOutgoing = items.get(0);
+        Mockito
+                .when(memoryBooking.findAllByItemOwnerIdInAndStatusNotOrderByStart(
+                        List.of(1), REJECTED
+                ))
+                .thenReturn(List.of(booking, booking, booking));
+        itemService.getItems(1, 0, 5);
+
+        assertThat(items.size(), equalTo(1));
+        assertThat(itemDtoOutgoing.getId(), equalTo(item.getId()));
+        assertThat(itemDtoOutgoing.getName(), equalTo(item.getName()));
+        assertThat(itemDtoOutgoing.getDescription(), equalTo(item.getDescription()));
+        assertThat(itemDtoOutgoing.getIsAvailable(), equalTo(item.getIsAvailable()));
+        assertThat(itemDtoOutgoing.getRequestId(), equalTo(item.getRequest().getId()));
+        assertThat(itemDtoOutgoing.getLastBooking(), nullValue());
+
     }
 
     @Test
