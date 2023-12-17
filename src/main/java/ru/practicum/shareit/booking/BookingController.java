@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.model.BookingDtoDefault;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
@@ -21,11 +23,13 @@ public class BookingController {
 
     @PostMapping
     public BookingDtoOutgoing postBooking(@RequestHeader("X-Sharer-User-Id") Integer userId, @Valid @RequestBody BookingDtoDefault bookingDtoDefault) {
+        log.info("Получен запрос на добавление бронирования пользователем с ID = {}", userId);
         return bookingService.postBooking(bookingDtoDefault, userId);
     }
 
     @GetMapping("/{bookingId}")
     public BookingDtoOutgoing getBooking(@RequestHeader("X-Sharer-User-Id") Integer userId, @PathVariable Integer bookingId) {
+        log.info("Получен запрос на получение бронирования с ID = {}", bookingId);
         return bookingService.getBooking(userId, bookingId);
     }
 
@@ -36,6 +40,7 @@ public class BookingController {
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
+        log.info("Получен запрос на получение всех бронирований пользователя с Id = {}", userId);
         return bookingService.getUserBookings(userId, state, from, size);
     }
 
@@ -46,11 +51,13 @@ public class BookingController {
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size
     ) {
+        log.info("Получен запрос на получение всех бронирований владельца с ID = {}", userId);
         return bookingService.getOwnerBookings(userId, state, from, size);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingDtoOutgoing putBooking(@RequestHeader("X-Sharer-User-Id") Integer userId, @PathVariable Integer bookingId, @RequestParam boolean approved) {
+        log.info("Получен запрос на обновление бронирования с ID = {}", bookingId);
         return bookingService.putBooking(userId, bookingId, approved);
     }
 }

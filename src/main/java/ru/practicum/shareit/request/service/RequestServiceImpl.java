@@ -52,16 +52,6 @@ public class RequestServiceImpl implements RequestService {
             throw new NotFoundUserException("Not found userId: " + userId);
         }
 
-//        List<Item> items = memoryItem.findAllByRequestRequestorId(userId);
-//        Map<Request, List<Item>> requestListMap = items.stream()
-//                .collect(Collectors.groupingBy(Item::getRequest));
-//        List<RequestDto> requestDtoList = new ArrayList<>();
-//        for (Request request : requestListMap.keySet()){
-//            requestDtoList.add(RequestMapper.itemRequestToDto(request, requestListMap.get(request)));
-//        }
-//        return requestDtoList;
-
-
         List<Request> requestList = memoryRequest.findByRequestorIdOrderByCreatedDesc(userId);
         List<Item> itemList = memoryItem.findAllByRequestRequestorId(userId);
         List<RequestDto> requestDtoList = new ArrayList<>();

@@ -83,15 +83,18 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> bookingList = memoryBooking.findAllByItemOwnerIdInAndStatusNotOrderByStart(itemIds, BookingStatus.REJECTED);
         Map<Item, List<Booking>> bookingsByItem = bookingList.stream()
                 .collect(Collectors.groupingBy(Booking::getItem));
+        List<CommentDto> comments = memoryComment.findAllByItemIdIn(itemIds).stream()
+                .map(comment -> commentToDto(comment, comment.getAuthor().getName()))
+                .collect(Collectors.toList());
+        Map<Integer, List<CommentDto>> commentsByItemId = comments.stream()
+                .collect(Collectors.groupingBy(CommentDto::getId));
         return itemList.stream()
                 .map(item -> {
                     List<Booking> bookings = bookingsByItem.get(item);
                     Booking next = findNext(bookings);
                     Booking last = findLast(bookings);
-                    List<CommentDto> comments = memoryComment.findByItemIdOrderByCreatedDesc(item.getId()).stream()
-                            .map(comment -> commentToDto(comment, comment.getAuthor().getName()))
-                            .collect(Collectors.toList());
-                    return itemToDto(item, last, next, comments);
+                    List<CommentDto> itemComments = commentsByItemId.get(item.getId());
+                    return itemToDto(item, last, next, itemComments);
                 }).collect(Collectors.toList());
     }
 

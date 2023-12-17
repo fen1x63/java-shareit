@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.repository.MemoryItem;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.MemoryUser;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class ItemStorageTest {
@@ -27,5 +29,8 @@ public class ItemStorageTest {
                 user,
                 null
         );
+        Item savedItem = memoryItem.save(item);
+
+        assertNotNull(savedItem, "Item should be saved in the database");
     }
 }
