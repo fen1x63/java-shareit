@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class ItemStorageTest {
+public class ItemRepositoryTest {
     private final MemoryItem memoryItem;
     private final MemoryUser memoryUser;
 
@@ -21,14 +21,7 @@ public class ItemStorageTest {
     public void shouldFindByText() {
         User user = new User(null, "user", "user@email.com");
         memoryUser.save(user);
-        Item item = new Item(
-                null,
-                "item name",
-                "item description",
-                true,
-                user,
-                null
-        );
+        Item item = new Item(null, "item name","item description", true, user, null);
         Item savedItem = memoryItem.save(item);
 
         assertNotNull(savedItem, "Item should be saved in the database");
