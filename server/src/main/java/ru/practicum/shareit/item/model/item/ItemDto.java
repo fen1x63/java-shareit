@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model.item;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jdk.jshell.Snippet;
 import lombok.*;
 import ru.practicum.shareit.booking.model.BookingDtoDefault;
 import ru.practicum.shareit.item.model.comment.CommentDto;

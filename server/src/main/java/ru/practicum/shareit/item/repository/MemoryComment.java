@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface MemoryComment extends JpaRepository<Comment, Integer> {
     List<Comment> findByItemIdOrderByCreatedDesc(int itemId);
+
     List<Comment> findAllByItemIdIn(List<Integer> itemId);
 }
