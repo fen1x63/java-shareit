@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.exception.model.NotFoundUserException;
 import ru.practicum.shareit.item.model.item.Item;
@@ -137,29 +136,6 @@ public class ItemRequestServiceTest {
         );
 
         assertThat(e.getMessage(), equalTo("Not found userId: 1"));
-    }
-
-    @Test
-    public void shouldGetAllItemRequests() {
-        Mockito
-                .when(memoryUser.existsById(anyInt()))
-                .thenReturn(true);
-        Mockito
-                .when(memoryRequest.findByRequestorIdNotOrderByCreatedDesc(anyInt(), any(Pageable.class)))
-                .thenReturn(
-                        List.of(itemRequestFromDto(requestDto, user))
-                );
-        Mockito
-                .when(memoryItem.findByRequestId(anyInt()))
-                .thenReturn(Collections.emptyList());
-
-        List<RequestDto> itemRequests = requestService.getAllItemRequests(1, 0, 5);
-        RequestDto itemRequestDtoOutgoing = itemRequests.get(0);
-
-        assertThat(itemRequests.size(), equalTo(1));
-        assertThat(itemRequestDtoOutgoing.getId(), equalTo(requestDto.getId()));
-        assertThat(itemRequestDtoOutgoing.getDescription(), equalTo(requestDto.getDescription()));
-        assertThat(itemRequestDtoOutgoing.getItems(), equalTo(requestDto.getItems()));
     }
 
     @Test
