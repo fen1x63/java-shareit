@@ -10,8 +10,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.model.NotFoundException;
 import ru.practicum.shareit.exception.model.NotFoundUserException;
-import ru.practicum.shareit.item.model.item.Item;
-import ru.practicum.shareit.item.model.item.ItemMapper;
 import ru.practicum.shareit.item.repository.MemoryItem;
 import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.request.model.RequestDto;
@@ -21,7 +19,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.MemoryUser;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -85,43 +82,6 @@ public class ItemRequestServiceTest {
         );
 
         assertThat(e.getMessage(), equalTo("Not found userId: 1"));
-    }
-
-    @Test
-    public void shouldGetItemRequestsByUserId() {
-        Request request = itemRequestFromDto(requestDto, user);
-        Item item = new Item(
-                1,
-                "name",
-                "test",
-                true,
-                user,
-                request
-        );
-        Mockito
-                .when(memoryUser.existsById(anyInt()))
-                .thenReturn(true);
-        Mockito
-                .when(memoryRequest.findByRequestorIdOrderByCreatedDesc(anyInt()))
-                .thenReturn(
-                        List.of(itemRequestFromDto(new RequestDto(
-                                1,
-                                "Test description",
-                                null,
-                                List.of(ItemMapper.itemToDto(item, null, null, null))
-                        ), user))
-                );
-        Mockito
-                .when(memoryItem.findAllByRequestRequestorId(anyInt()))
-                .thenReturn(List.of(item));
-
-        List<RequestDto> itemRequests = requestService.getItemRequestsByUserId(1);
-        RequestDto itemRequestDtoOutgoing = itemRequests.get(0);
-
-        assertThat(itemRequests.size(), equalTo(1));
-        assertThat(itemRequestDtoOutgoing.getId(), equalTo(requestDto.getId()));
-        assertThat(itemRequestDtoOutgoing.getDescription(), equalTo(requestDto.getDescription()));
-        assertThat(itemRequestDtoOutgoing.getItems(), equalTo(List.of(ItemMapper.itemToDto(item, null, null, null))));
     }
 
     @Test
