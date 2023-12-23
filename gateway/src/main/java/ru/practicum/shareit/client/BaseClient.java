@@ -1,5 +1,6 @@
 package ru.practicum.shareit.client;
 
+import io.micrometer.core.lang.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,9 +15,13 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class BaseClient {
-    private final RestTemplate restTemplate;
+    protected final RestTemplate restTemplate;
 
-    protected ResponseEntity<Object> get(String path, Integer userId, Map<String, Object> parameters) {
+    protected ResponseEntity<Object> get(String path, int userId) {
+        return get(path, userId, null);
+    }
+
+    protected ResponseEntity<Object> get(String path, Integer userId,@Nullable Map<String, Object> parameters) {
         return makeAndSendRequest(HttpMethod.GET, path, userId, parameters, null);
     }
 
@@ -36,8 +41,8 @@ public class BaseClient {
             HttpMethod method,
             String path,
             Integer userId,
-            Map<String, Object> parameters,
-            T body
+            @Nullable Map<String, Object> parameters,
+            @Nullable T body
     ) {
         HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders(userId));
 

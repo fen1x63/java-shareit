@@ -50,7 +50,9 @@ public class RequestServiceImpl implements RequestService {
             throw new NotFoundUserException("Not found userId: " + userId);
         }
         List<Request> requestList = memoryRequest.findByRequestorIdOrderByCreatedDesc(userId);
-        List<Item> items = memoryItem.findAllByRequestRequestorId(userId);
+        List<Item> items = memoryItem.findAllByRequestRequestorIdIn(requestList.stream()
+                .map(Request::getId)
+                .collect(Collectors.toList()));
         return transformationItemRequest(requestList, items);
     }
 
@@ -92,7 +94,7 @@ public class RequestServiceImpl implements RequestService {
             }
         }
         List<RequestDto> requestDtoList = new ArrayList<>();
-        for (Request request : requestListMap.keySet()) {
+        for (Request request : requestList) {
             requestDtoList.add(RequestMapper.itemRequestToDto(request, requestListMap.get(request)));
         }
         return requestDtoList.stream().sorted(Comparator
